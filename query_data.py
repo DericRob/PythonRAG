@@ -1,15 +1,11 @@
-"""
-Query the RAG system with better error handling and multiple import paths.
-"""
 from langchain_chroma import Chroma
 from langchain.prompts import ChatPromptTemplate
-import sys
 import importlib.util
 
 from get_embedding_function import get_embedding_function
 
 CHROMA_PATH = "chroma"
-LLAMA_MODEL = "llama3.2:3b"
+LLAMA_MODEL = "llama3.2:3b"  # Make sure this matches what you see with "ollama list"
 
 # Improved prompt template with instructions on how to respond
 PROMPT_TEMPLATE = """
@@ -28,40 +24,26 @@ Instructions:
 - Cite the relevant sources when possible
 """
 
-
 def get_llm_class():
-    """
-    Try multiple import paths to find the Ollama LLM class.
-    
-    Returns:
-        Ollama class or raises ImportError if not found
-    """
+    """Try multiple import paths to find the Ollama LLM class."""
     import_paths = [
         "langchain_ollama.Ollama",
         "langchain_community.llms.ollama.Ollama",
         "langchain.llms.ollama.Ollama"
     ]
     
-    import_errors = []
-    
     for path in import_paths:
         module_path, class_name = path.rsplit(".", 1)
         try:
             module = importlib.import_module(module_path)
             OllamaClass = getattr(module, class_name)
-            print(f"✅ Successfully imported Ollama from {module_path}")
+            print(f"Using Ollama from {module_path}")
             return OllamaClass
-        except (ImportError, AttributeError) as e:
-            import_errors.append(f"{path}: {str(e)}")
+        except (ImportError, AttributeError):
+            continue
     
     # If we get here, none of the imports worked
-    error_msg = "Failed to import Ollama from any known path:\n"
-    error_msg += "\n".join([f"- {err}" for err in import_errors])
-    error_msg += "\n\nPlease install one of the following packages:"
-    error_msg += "\n- pip install langchain_ollama"
-    error_msg += "\n- pip install langchain-community"
-    raise ImportError(error_msg)
-
+    raise ImportError("Could not import Ollama from any known path. Please install langchain_ollama.")
 
 def query_rag(query_text: str):
     """
@@ -116,7 +98,6 @@ def query_rag(query_text: str):
         traceback.print_exc()
         return f"An error occurred: {str(e)}", []
 
-
 def main():
     """
     Command-line interface for querying the RAG system.
@@ -137,7 +118,6 @@ def main():
     print("\n--- SOURCES ---")
     for source in sources:
         print(f"- {source}")
-
 
 if __name__ == "__main__":
     main()

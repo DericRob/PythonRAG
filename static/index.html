@@ -16,44 +16,21 @@
             background-color: #f0f0f0;
         }
         
-        .cdc-header {
+        .header {
             background-color: #075290;
             color: white;
-            margin-bottom: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
             padding: 20px;
-        }
-        
-        .cdc-header .logo {
-            width: 2000px;
-            font-weight: 700;
-            font-size: 24px;
-            letter-spacing: 0.5px;
-            display: flex;
-            align-items: center;
-        }
-        
-        .cdc-header .logo-icon {
-            background-color: white;
-            color: #075290;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 800;
-            margin-right: 12px;
-            font-size: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+            border-radius: 8px;
         }
         
         .container {
             background-color: white;
             border-radius: 8px;
             box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
-            padding: 0 30px 30px;
+            padding: 30px;
             margin-bottom: 30px;
-            overflow: hidden;
         }
         
         h1 {
@@ -61,14 +38,6 @@
             margin-bottom: 30px;
             text-align: center;
             font-weight: 600;
-        }
-        
-        h2 {
-            color: #075290;
-            margin-top: 30px;
-            font-weight: 500;
-            border-bottom: 1px solid #ddd;
-            padding-bottom: 10px;
         }
         
         .input-group {
@@ -82,21 +51,12 @@
         }
         
         input[type="text"], 
-        textarea, 
-        select {
+        textarea {
             width: 100%;
             padding: 12px;
             border: 1px solid #ddd;
             border-radius: 4px;
             font-size: 16px;
-            transition: border 0.3s;
-        }
-        
-        input[type="text"]:focus, 
-        textarea:focus, 
-        select:focus {
-            border-color: #3498db;
-            outline: none;
         }
         
         textarea {
@@ -112,15 +72,10 @@
             border-radius: 4px;
             cursor: pointer;
             font-size: 16px;
-            transition: background-color 0.3s;
         }
         
         button:hover {
             background-color: #005eaa;
-        }
-        
-        .results {
-            margin-top: 30px;
         }
         
         .result-box {
@@ -129,6 +84,7 @@
             border-radius: 4px;
             padding: 20px;
             margin-bottom: 20px;
+            display: none;
         }
         
         .result-box h3 {
@@ -163,25 +119,6 @@
             cursor: pointer;
             font-size: 14px;
             float: right;
-            margin-top: -5px;
-        }
-        
-        .copy-btn:hover {
-            background-color: #218838;
-        }
-        
-        .cdc-guidance {
-            background-color: #e9f6fd;
-            border-left: 4px solid #075290;
-            padding: 15px;
-            margin-bottom: 20px;
-            border-radius: 0 4px 4px 0;
-        }
-        
-        .cdc-guidance h3 {
-            color: #075290;
-            margin-top: 0;
-            font-size: 18px;
         }
         
         .error {
@@ -192,48 +129,17 @@
             background-color: #fadbd8;
             display: none;
         }
-        
-        .sources-container {
-            margin-top: 15px;
-            font-size: 14px;
-            color: #666;
-        }
-        
-        .status-indicator {
-            display: inline-block;
-            padding: 5px 10px;
-            border-radius: 4px;
-            font-size: 14px;
-            margin-bottom: 20px;
-            background-color: #e9f6fd;
-            color: #075290;
-        }
-        
-        /* Responsive adjustments */
-        @media (max-width: 768px) {
-            .container {
-                padding: 20px;
-            }
-        }
     </style>
 </head>
 <body>
-    <div class="cdc-header">
-        <img src="./header.png" alt="Header" style="max-height: 120px; max-width: 100%;">
-
-    </div>
-    <div class="container">
- 
-        
+    <div class="header">
         <h1>Content Creation Assistant</h1>
-        
-        <div class="status-indicator" id="status-indicator">
-            Connecting to backend...
-        </div>
-        
+    </div>
+    
+    <div class="container">
         <div class="input-group">
             <label for="topic">What would you like content about?</label>
-            <input type="text" id="topic" placeholder="Enter your topic or question..." />
+            <input type="text" id="topic" placeholder="Enter your topic or question...">
         </div>
         
         <div class="input-group">
@@ -244,30 +150,24 @@
         <button id="generate-btn">Generate Content <span id="spinner" class="spinner"></span></button>
         <div id="error-message" class="error"></div>
         
-        <div class="results">
-            <div id="article-result" class="result-box" style="display: none;">
-                <h3>Article Content <button class="copy-btn" data-target="article-content">Copy</button></h3>
-                <div id="article-content"></div>
-                <div id="article-sources" class="sources-container"></div>
-            </div>
-            
-            <div id="facebook-result" class="result-box" style="display: none;">
-                <h3>Social Media Post <button class="copy-btn" data-target="facebook-content">Copy</button></h3>
-                <div id="facebook-content"></div>
-            </div>
-            
-            <div id="youtube-result" class="result-box" style="display: none;">
-                <h3>Video Script <button class="copy-btn" data-target="youtube-content">Copy</button></h3>
-                <div id="youtube-content"></div>
-            </div>
+        <div id="article-result" class="result-box">
+            <h3>Article Content <button class="copy-btn" data-target="article-content">Copy</button></h3>
+            <div id="article-content"></div>
+        </div>
+        
+        <div id="facebook-result" class="result-box">
+            <h3>Facebook Post <button class="copy-btn" data-target="facebook-content">Copy</button></h3>
+            <div id="facebook-content"></div>
+        </div>
+        
+        <div id="youtube-result" class="result-box">
+            <h3>YouTube Script <button class="copy-btn" data-target="youtube-content">Copy</button></h3>
+            <div id="youtube-content"></div>
         </div>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Check server status
-            checkServerStatus();
-            
             // Event listeners
             document.getElementById('generate-btn').addEventListener('click', generateContent);
             
@@ -291,26 +191,6 @@
             });
         });
         
-        async function checkServerStatus() {
-            const statusIndicator = document.getElementById('status-indicator');
-            
-            try {
-                const response = await fetch('/api/status');
-                if (response.ok) {
-                    const data = await response.json();
-                    statusIndicator.textContent = `Status: Online | Model: ${data.model} | Database: ${data.database}`;
-                    statusIndicator.style.backgroundColor = '#d4edda';
-                    statusIndicator.style.color = '#155724';
-                } else {
-                    throw new Error('Server returned an error');
-                }
-            } catch (error) {
-                statusIndicator.textContent = 'Status: Offline | Cannot connect to server';
-                statusIndicator.style.backgroundColor = '#f8d7da';
-                statusIndicator.style.color = '#721c24';
-            }
-        }
-        
         async function generateContent() {
             const topic = document.getElementById('topic').value.trim();
             const additionalInfo = document.getElementById('additional-info').value.trim();
@@ -333,7 +213,7 @@
             spinner.style.display = 'inline-block';
             
             try {
-                // Call our backend API
+                // Call backend API
                 const response = await fetch('/api/query', {
                     method: 'POST',
                     headers: {
@@ -352,26 +232,21 @@
                 
                 const data = await response.json();
                 
-                // Display article content
-                document.getElementById('article-content').innerHTML = formatContent(data.articleContent);
-                document.getElementById('article-result').style.display = 'block';
-                
-                // Display sources if available
-                const sourcesContainer = document.getElementById('article-sources');
-                if (data.sources && data.sources.length > 0) {
-                    sourcesContainer.innerHTML = '<strong>Sources:</strong><br>' + 
-                        data.sources.map(source => `- ${source}`).join('<br>');
-                } else {
-                    sourcesContainer.innerHTML = '';
+                // Display results
+                if (data.articleContent) {
+                    document.getElementById('article-content').innerHTML = formatContent(data.articleContent);
+                    document.getElementById('article-result').style.display = 'block';
                 }
                 
-                // Display Facebook post
-                document.getElementById('facebook-content').innerHTML = formatContent(data.facebookContent);
-                document.getElementById('facebook-result').style.display = 'block';
+                if (data.facebookContent) {
+                    document.getElementById('facebook-content').innerHTML = formatContent(data.facebookContent);
+                    document.getElementById('facebook-result').style.display = 'block';
+                }
                 
-                // Display YouTube script
-                document.getElementById('youtube-content').innerHTML = formatContent(data.youtubeContent);
-                document.getElementById('youtube-result').style.display = 'block';
+                if (data.youtubeContent) {
+                    document.getElementById('youtube-content').innerHTML = formatContent(data.youtubeContent);
+                    document.getElementById('youtube-result').style.display = 'block';
+                }
                 
             } catch (error) {
                 showError(error.message || 'An error occurred while generating content.');
@@ -382,12 +257,15 @@
         }
         
         function formatContent(content) {
+            // Guard against null or undefined content
+            if (!content) return '';
+            
             // Convert line breaks to <br> tags and maintain paragraphs
             return content
                 .replace(/\n\n/g, '</p><p>')
                 .replace(/\n/g, '<br>')
                 .replace(/^/, '<p>')
-                .replace(/$/, '</p>');
+                .replace(/$/g, '</p>');
         }
         
         function showError(message) {
@@ -396,3 +274,6 @@
             errorElement.style.display = 'block';
             document.getElementById('spinner').style.display = 'none';
         }
+    </script>
+</body>
+</html>

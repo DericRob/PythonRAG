@@ -6,7 +6,7 @@ import json
 from query_data import query_rag
 
 app = Flask(__name__, static_folder="static")
-CORS(app)  # Enable Cross-Origin Resource Sharing
+CORS(app)  # Enable CORS for all routes
 
 @app.route('/')
 def index():
@@ -15,26 +15,11 @@ def index():
 
 @app.route('/api/query', methods=['POST'])
 def process_query():
-    """
-    Process a query from the frontend.
-    
-    Expected JSON body:
-    {
-        "topic": "What's the question?",
-        "additionalInfo": "Any additional context"
-    }
-    
-    Returns:
-    {
-        "articleContent": "Generated article",
-        "facebookContent": "Generated social post",
-        "youtubeContent": "Generated video script",
-        "sources": ["List of sources used"]
-    }
-    """
+    """Process a query from the frontend."""
     try:
         # Get the request data
         data = request.json
+        print(f"Received request: {data}")
         
         if not data or 'topic' not in data:
             return jsonify({"error": "Missing required field 'topic'"}), 400
@@ -47,9 +32,16 @@ def process_query():
         if additional_info:
             full_query += f" Context: {additional_info}"
             
+        print(f"Processing query: {full_query}")
+            
         # Query the RAG system
+        print("Generating article content...")
         article_response, sources = query_rag(f"Write an informative article about: {full_query}")
+        
+        print("Generating social media content...")
         facebook_response, _ = query_rag(f"Write a short social media post about: {full_query}")
+        
+        print("Generating video script content...")
         youtube_response, _ = query_rag(f"Write a script for a video about: {full_query}")
         
         # Return the responses
@@ -67,7 +59,7 @@ def process_query():
 
 @app.route('/api/status', methods=['GET'])
 def check_status():
-    """Check if the API is running and the RAG system is available."""
+    """Check if the API is running."""
     return jsonify({
         "status": "online",
         "model": "Llama 3.2 3B",
@@ -75,79 +67,303 @@ def check_status():
     })
 
 def setup_static_folder():
-    """Ensure the static folder exists and contains the frontend files."""
+    """Set up the static folder with the frontend files."""
     static_dir = os.path.join(os.path.dirname(__file__), 'static')
     
-    # Create static directory if it doesn't exist
     if not os.path.exists(static_dir):
         os.makedirs(static_dir)
-        
-    # Check if openai004.html exists
-    html_path = 'openai004.html'
-    if not os.path.exists(html_path):
-        print(f"Error: {html_path} not found!")
-        return False
-        
-    # Copy the HTML file to the static directory
-    with open(html_path, 'r', encoding='utf-8') as f:
-        html_content = f.read()
-        
-    # Update the HTML to work with our backend
-    # Replace OpenAI API calls with our own backend API
-    html_content = html_content.replace(
-        'https://api.openai.com/v1/chat/completions', 
-        '/api/query'
-    )
+        print(f"Created static directory at {static_dir}")
     
-    # Fix the JavaScript to work with our API
-    # Replace the entire callOpenAI function with our version
-    js_pattern = "async function callOpenAI(contentType, topic, additionalInfo, apiKey) {"
-    js_replacement = """async function callOpenAI(contentType, topic, additionalInfo, apiKey) {
-    // For backend API, we'll use a different approach
-    try {
-        const response = await fetch('/api/query', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                topic: topic,
-                additionalInfo: additionalInfo
-            })
+    # Create a simple HTML file directly
+    index_path = os.path.join(static_dir, 'index.html')
+    
+    with open(index_path, 'w', encoding='utf-8') as f:
+        f.write("""<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Content Creation Assistant</title>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Source Sans Pro', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #212529;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        
+        .header {
+            background-color: #075290;
+            color: white;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+            border-radius: 8px;
+        }
+        
+        .container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            color: #075290;
+            margin-bottom: 30px;
+            text-align: center;
+            font-weight: 600;
+        }
+        
+        .input-group {
+            margin-bottom: 25px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        input[type="text"], 
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
+        button {
+            background-color: #075290;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        button:hover {
+            background-color: #005eaa;
+        }
+        
+        .result-box {
+            background-color: #f9f9f9;
+            border: 1px solid #eee;
+            border-radius: 4px;
+            padding: 20px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .result-box h3 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+        
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border-left-color: #3498db;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            vertical-align: middle;
+            margin-left: 10px;
+            display: none;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .copy-btn {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            float: right;
+        }
+        
+        .error {
+            color: #e74c3c;
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 4px;
+            background-color: #fadbd8;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Content Creation Assistant</h1>
+    </div>
+    
+    <div class="container">
+        <div class="input-group">
+            <label for="topic">What would you like content about?</label>
+            <input type="text" id="topic" placeholder="Enter your topic or question...">
+        </div>
+        
+        <div class="input-group">
+            <label for="additional-info">Additional Information or Context (optional)</label>
+            <textarea id="additional-info" placeholder="Add any specific details, target audience, tone requirements, etc."></textarea>
+        </div>
+        
+        <button id="generate-btn">Generate Content <span id="spinner" class="spinner"></span></button>
+        <div id="error-message" class="error"></div>
+        
+        <div id="article-result" class="result-box">
+            <h3>Article Content <button class="copy-btn" data-target="article-content">Copy</button></h3>
+            <div id="article-content"></div>
+        </div>
+        
+        <div id="facebook-result" class="result-box">
+            <h3>Facebook Post <button class="copy-btn" data-target="facebook-content">Copy</button></h3>
+            <div id="facebook-content"></div>
+        </div>
+        
+        <div id="youtube-result" class="result-box">
+            <h3>YouTube Script <button class="copy-btn" data-target="youtube-content">Copy</button></h3>
+            <div id="youtube-content"></div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Event listeners
+            document.getElementById('generate-btn').addEventListener('click', generateContent);
+            
+            // Copy buttons
+            document.querySelectorAll('.copy-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const targetId = this.getAttribute('data-target');
+                    const contentElement = document.getElementById(targetId);
+                    const textToCopy = contentElement.innerText;
+                    
+                    navigator.clipboard.writeText(textToCopy).then(() => {
+                        const originalText = this.innerText;
+                        this.innerText = 'Copied!';
+                        setTimeout(() => {
+                            this.innerText = originalText;
+                        }, 2000);
+                    }).catch(err => {
+                        console.error('Could not copy text: ', err);
+                    });
+                });
+            });
         });
         
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.error || `API call failed with status: ${response.status}`);
+        async function generateContent() {
+            const topic = document.getElementById('topic').value.trim();
+            const additionalInfo = document.getElementById('additional-info').value.trim();
+            const errorElement = document.getElementById('error-message');
+            const spinner = document.getElementById('spinner');
+            
+            // Validate inputs
+            if (!topic) {
+                showError('Please enter a topic or question.');
+                return;
+            }
+            
+            // Clear previous results and errors
+            errorElement.style.display = 'none';
+            document.getElementById('article-result').style.display = 'none';
+            document.getElementById('facebook-result').style.display = 'none';
+            document.getElementById('youtube-result').style.display = 'none';
+            
+            // Show spinner
+            spinner.style.display = 'inline-block';
+            
+            try {
+                // Call backend API
+                const response = await fetch('/api/query', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        topic: topic,
+                        additionalInfo: additionalInfo
+                    })
+                });
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || `API call failed with status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                // Display results
+                if (data.articleContent) {
+                    document.getElementById('article-content').innerHTML = formatContent(data.articleContent);
+                    document.getElementById('article-result').style.display = 'block';
+                }
+                
+                if (data.facebookContent) {
+                    document.getElementById('facebook-content').innerHTML = formatContent(data.facebookContent);
+                    document.getElementById('facebook-result').style.display = 'block';
+                }
+                
+                if (data.youtubeContent) {
+                    document.getElementById('youtube-content').innerHTML = formatContent(data.youtubeContent);
+                    document.getElementById('youtube-result').style.display = 'block';
+                }
+                
+            } catch (error) {
+                showError(error.message || 'An error occurred while generating content.');
+            } finally {
+                // Hide spinner
+                spinner.style.display = 'none';
+            }
         }
         
-        const data = await response.json();
-        
-        // Return the appropriate content based on contentType
-        if (contentType === 'article') {
-            return data.articleContent;
-        } else if (contentType === 'facebook') {
-            return data.facebookContent;
-        } else if (contentType === 'youtube') {
-            return data.youtubeContent;
+        function formatContent(content) {
+            // Guard against null or undefined content
+            if (!content) return '';
+            
+            // Convert line breaks to <br> tags and maintain paragraphs
+            return content
+                .replace(/\\n\\n/g, '</p><p>')
+                .replace(/\\n/g, '<br>')
+                .replace(/^/, '<p>')
+                .replace(/$/g, '</p>');
         }
-    } catch (error) {
-        throw error;
-    }"""
+        
+        function showError(message) {
+            const errorElement = document.getElementById('error-message');
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+            document.getElementById('spinner').style.display = 'none';
+        }
+    </script>
+</body>
+</html>""")
     
-    # Replace the function
-    if js_pattern in html_content:
-        html_content = html_content.replace(js_pattern, js_replacement)
-    
-    # Save the modified HTML
-    with open(os.path.join(static_dir, 'index.html'), 'w', encoding='utf-8') as f:
-        f.write(html_content)
-    
-    print(f"Frontend files prepared in {static_dir}")
+    print(f"Created simple index.html in {static_dir}")
     return True
 
 if __name__ == '__main__':
     if setup_static_folder():
-        app.run(debug=True, host='0.0.0.0', port=5000)
+        print("Starting web server on http://localhost:5000")
+        app.run(debug=True, host='0.0.0.0', port=5000, threaded=True)
     else:
-        print("Failed to set up the static folder. Please check that openai004.html exists.")
+        print("Failed to set up static folder")

@@ -88,13 +88,65 @@ def setup_env():
     # Install Python dependencies
     print("\n=== Installing Python Dependencies ===")
     try:
-        subprocess.run([sys.executable, "-m", "pip", "install", "-r", "requirements.txt"], check=True)
+        # Upgrade pip first
+        print("Upgrading pip...")
+        subprocess.run([sys.executable, "-m", "pip", "install", "--upgrade", "pip"], check=True)
+        
+        # Install build dependencies first
+        print("Installing build dependencies...")
+        build_deps = ["wheel", "setuptools", "numpy", "protobuf"]
+        subprocess.run([sys.executable, "-m", "pip", "install", "--upgrade"] + build_deps, check=True)
+        
+        # Install core packages explicitly
+        core_packages = [
+            "langchain-ollama",
+            "langchain-chroma",
+            "requests"
+        ]
+        
+        for package in core_packages:
+            print(f"Installing {package}...")
+            subprocess.run([sys.executable, "-m", "pip", "install", "--upgrade", package], check=True)
+        
+        # Create a simplified requirements file without problematic packages
+        create_simplified_requirements()
+        
+        # Install from the simplified requirements
+        print("Installing remaining dependencies...")
+        subprocess.run([sys.executable, "-m", "pip", "install", "-r", "requirements_simple.txt"], check=True)
+        
         print("✅ Python dependencies installed successfully")
-    except subprocess.CalledProcessError:
-        print("❌ Failed to install Python dependencies")
+    except subprocess.CalledProcessError as e:
+        print(f"❌ Failed to install Python dependencies: {e}")
         return False
     
     return True
+
+def create_simplified_requirements():
+    """Create a simplified requirements file without problematic packages."""
+    problematic_packages = ["onnx", "unstructured-inference"]
+    simplified_reqs = []
+    
+    try:
+        with open("requirements.txt", "r") as f:
+            for line in f:
+                # Skip problematic packages or those already installed
+                if not any(pkg in line for pkg in problematic_packages):
+                    simplified_reqs.append(line.strip())
+    
+        with open("requirements_simple.txt", "w") as f:
+            for req in simplified_reqs:
+                f.write(f"{req}\n")
+        
+        print("Created simplified requirements file")
+    except Exception as e:
+        print(f"Warning: Failed to create simplified requirements: {e}")
+        # If we can't create it, copy the original
+        try:
+            import shutil
+            shutil.copy("requirements.txt", "requirements_simple.txt")
+        except:
+            pass
 
 
 def main():

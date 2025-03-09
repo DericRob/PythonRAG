@@ -6,7 +6,6 @@ from langchain_community.document_loaders import (
     TextLoader,
     CSVLoader,
     Docx2txtLoader,
-    UnstructuredExcelLoader,
 )
 
 def load_documents(data_path: str) -> List[Document]:
@@ -66,8 +65,34 @@ def load_documents(data_path: str) -> List[Document]:
                 
             # Excel files
             elif filename.endswith(('.xlsx', '.xls')):
-                loader = UnstructuredExcelLoader(file_path, mode="elements")
-                all_documents.extend(loader.load())
+                try:
+                    # Custom Excel handling with pandas
+                    import pandas as pd
+                    
+                    # Read all sheets
+                    xlsx = pd.ExcelFile(file_path)
+                    sheet_names = xlsx.sheet_names
+                    
+                    for sheet_name in sheet_names:
+                        df = pd.read_excel(file_path, sheet_name=sheet_name)
+                        # Convert dataframe to text
+                        text = f"Sheet: {sheet_name}\n\n{df.to_string(index=False)}"
+                        
+                        # Create a document
+                        doc = Document(
+                            page_content=text,
+                            metadata={
+                                "source": file_path,
+                                "sheet": sheet_name,
+                                "rows": len(df),
+                                "columns": len(df.columns)
+                            }
+                        )
+                        all_documents.append(doc)
+                    
+                    print(f"Loaded Excel file {filename} with {len(sheet_names)} sheets")
+                except Exception as e:
+                    print(f"Error loading Excel file {filename}: {str(e)}")
                 
             # Add support for .doc files if needed
             elif filename.endswith('.doc'):

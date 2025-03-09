@@ -16,6 +16,10 @@ from threading import Timer
 def check_dependencies():
     """Check if all required dependencies are installed."""
     try:
+        # Check for required packages
+        import langchain_ollama
+        import langchain_chroma
+        
         # Check if Ollama is installed and running
         try:
             import requests
@@ -34,7 +38,7 @@ def check_dependencies():
             response = requests.get("http://localhost:11434/api/tags")
             if response.status_code == 200:
                 models = response.json().get("models", [])
-                if not any(model.get("name") == "llama3.2:3b" for model in models):
+                if not any(model.get("name") == "llama3:3b" for model in models):
                     print("⚠️ Warning: Llama 3.2 3B model not found in Ollama.")
                     print("   Please run: ollama pull llama3:3b")
                     return False
@@ -44,7 +48,7 @@ def check_dependencies():
             
         # Check for nomic-embed-text model for embeddings
         try:
-            if not any(model.get("name") == "nomic-embed-text:latest" for model in models):
+            if not any(model.get("name") == "nomic-embed-text" for model in models):
                 print("⚠️ Warning: nomic-embed-text embedding model not found in Ollama.")
                 print("   Please run: ollama pull nomic-embed-text")
                 return False

@@ -1,5 +1,7 @@
 langchain>=0.1.0
-langchain-community>=0.0.13
+langchain_community>=0.0.13
+langchain_ollama>=0.0.1
+langchain_chroma>=0.0.1
 chromadb>=0.4.22
 pypdf>=3.17.0
 pytest>=7.4.0
@@ -7,13 +9,17 @@ langchain-text-splitters>=0.0.1
 docx2txt>=0.8
 python-docx>=0.8.11
 openpyxl>=3.1.2
-unstructured>=0.10.30
-unstructured-inference>=0.7.11
+# Using a more stable version of unstructured without inference
+unstructured>=0.10.30,<0.11.0
 markdown>=3.5.1
 tabulate>=0.9.0
 pandas>=2.0.3
-docx2txt>=0.8
 pydantic>=2.4.2
 flask>=2.3.3
 flask-cors>=4.0.0
 python-dotenv>=1.0.0
+requests>=2.31.0
+# Pre-built wheels that don't require compilation
+wheel>=0.38.4
+numpy>=1.24.0
+setuptools>=65.5.1

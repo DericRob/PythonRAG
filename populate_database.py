@@ -5,7 +5,7 @@ import hashlib
 import chromadb
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain.schema.document import Document
-from langchain_community.vectorstores import Chroma
+from langchain_chroma import Chroma
 
 from get_embedding_function import get_embedding_function
 from document_loader import load_documents

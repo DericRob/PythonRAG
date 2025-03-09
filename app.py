@@ -3,6 +3,7 @@ from flask_cors import CORS
 import traceback
 import os
 import json
+import shutil
 from query_data import query_rag
 
 app = Flask(__name__, static_folder="static")
@@ -74,6 +75,18 @@ def setup_static_folder():
         os.makedirs(static_dir)
         print(f"Created static directory at {static_dir}")
     
+    # Create header.png if it doesn't exist (need to copy from another source)
+    header_path = os.path.join(static_dir, 'header.png')
+    
+    # Try to copy header.png if it exists in the project directory
+    if not os.path.exists(header_path):
+        if os.path.exists('header.png'):
+            try:
+                shutil.copy('header.png', header_path)
+                print(f"Copied header.png to {header_path}")
+            except Exception as e:
+                print(f"Could not copy header image: {e}")
+    
     # Create a simple HTML file directly
     index_path = os.path.join(static_dir, 'index.html')
     
@@ -97,12 +110,33 @@ def setup_static_folder():
         }
         
         .header {
-            background-color: #075290;
+            /* CDC gradient from blue to teal */
+            background: linear-gradient(90deg, #0052A5 0%, #00A0B7 100%);
             color: white;
             padding: 20px;
             margin-bottom: 30px;
             text-align: center;
             border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+        
+        .header img {
+            max-width: 100%;
+            max-height: 120px;
+        }
+        
+        .header-title {
+            position: absolute;
+            color: white;
+            font-size: 28px;
+            font-weight: 700;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            text-align: center;
+            z-index: 1;
         }
         
         .container {
@@ -111,13 +145,6 @@ def setup_static_folder():
             box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
             padding: 30px;
             margin-bottom: 30px;
-        }
-        
-        h1 {
-            color: #075290;
-            margin-bottom: 30px;
-            text-align: center;
-            font-weight: 600;
         }
         
         .input-group {
@@ -213,12 +240,13 @@ def setup_static_folder():
 </head>
 <body>
     <div class="header">
-        <h1>Content Creation Assistant</h1>
+        <div class="header-title">Content Creation Assistant</div>
+        <img src="/static/header.png" alt="Content Creation Assistant Header">
     </div>
     
     <div class="container">
         <div class="input-group">
-            <label for="topic">What would you like content about?</label>
+            <label for="topic">What would you like the Content Creator to do for you?</label>
             <input type="text" id="topic" placeholder="Enter your topic or question...">
         </div>
         

@@ -15,7 +15,7 @@ This application uses Retrieval-Augmented Generation (RAG) to create content bas
 
 1. Python 3.9+ installed
 2. [Ollama](https://ollama.ai) installed and running
-3. Llama 3.2 3B and nomic-embed-text:latest models installed via Ollama
+3. Llama 3.2 3B and nomic-embed-text models installed via Ollama
 4. Python packages listed in `requirements.txt`
 
 ## Setup Instructions
@@ -33,8 +33,8 @@ Download and install [Ollama](https://ollama.ai).
 ### 3. Download Required Models
 
 ```bash
-ollama pull llama3.2:3b
-ollama pull nomic-embed-text:latest
+ollama pull llama3:3b
+ollama pull nomic-embed-text
 ```
 
 ### 4. Add Your Documents

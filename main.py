@@ -26,54 +26,6 @@ def check_dependencies():
             print("⚠️ Warning: Could not import Ollama from langchain_community.llms.ollama")
             print("   Please make sure langchain_community is properly installed.")
             return False
-            
-        # Check if Ollama is installed and running
-        try:
-            import requests
-            response = requests.get("http://localhost:11434/api/version", timeout=5)
-            if response.status_code != 200:
-                print("⚠️ Warning: Ollama API doesn't seem to be responding. Please make sure Ollama is running.")
-                print("   You can download Ollama from: https://ollama.ai/")
-                return False
-                
-            # Check for required models
-            try:
-                response = requests.get("http://localhost:11434/api/tags", timeout=5)
-                if response.status_code == 200:
-                    models = response.json().get("models", [])
-                    model_names = [model.get("name", "") for model in models]
-                    
-                    if "llama3.2:3b" not in model_names:
-                        print("⚠️ Warning: llama3.2:3b model not found in Ollama.")
-                        print("   Please run: ollama pull llama3.2:3b")
-                        return False
-                        
-                    if "nomic-embed-text:latest" not in model_names:
-                        print("⚠️ Warning: nomic-embed-text:latest model not found in Ollama.")
-                        print("   Please run: ollama pull nomic-embed-text:latest")
-                        return False
-                        
-                    print("✅ Required models are available: llama3.2:3b, nomic-embed-text:latest")
-                else:
-                    print("⚠️ Warning: Could not get model list from Ollama API.")
-                    return False
-            except Exception as e:
-                print(f"⚠️ Warning: Error checking Ollama models: {str(e)}")
-                return False
-                
-        except Exception as e:
-            print(f"⚠️ Warning: Couldn't connect to Ollama: {str(e)}")
-            print("   Please make sure Ollama is installed and running.")
-            print("   You can download Ollama from: https://ollama.ai/")
-            return False
-            
-        return True
-            
-    except ImportError as e:
-        package_name = getattr(e, 'name', str(e))
-        print(f"⚠️ Missing dependency: {package_name}")
-        print("   Please install the required packages: pip install -r requirements.txt")
-        return False
             print("⚠️ Warning: Couldn't connect to Ollama. Please make sure Ollama is installed and running.")
             print("   You can download Ollama from: https://ollama.ai/")
             return False

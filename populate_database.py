@@ -90,7 +90,8 @@ def add_to_chroma(chunks: list[Document]):
         print(f"👉 Adding {len(new_chunks)} new document chunks")
         new_chunk_ids = [chunk.metadata["id"] for chunk in new_chunks]
         db.add_documents(new_chunks, ids=new_chunk_ids)
-        db.persist()
+        # The persist() method is no longer needed with the new langchain_chroma
+        # Chroma automatically persists when using persist_directory
     else:
         print("✅ No new documents to add")
 

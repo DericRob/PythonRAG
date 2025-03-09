@@ -5,7 +5,7 @@ from langchain_community.llms.ollama import Ollama  # Correct import path
 from get_embedding_function import get_embedding_function
 
 CHROMA_PATH = "chroma"
-LLAMA_MODEL = "llama3:3b"  # Llama 3.2 3B model via Ollama
+LLAMA_MODEL = "llama3.2:3b"  # Llama 3.2 3B model via Ollama
 
 # Improved prompt template with instructions on how to respond
 PROMPT_TEMPLATE = """

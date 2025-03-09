@@ -76,17 +76,35 @@ def check_models():
     """Check if required models are available in Ollama."""
     print("\nChecking models...")
     
-    required_models = ["llama3:3b", "nomic-embed-text"]
+    required_models = ["llama3.2:3b", "nomic-embed-text:latest"]
     available_models = []
     
     try:
-        response = requests.get("http://localhost:11434/api/tags", timeout=5)
-        if response.status_code == 200:
-            data = response.json()
-            models = data.get("models", [])
-            available_models = [model.get("name") for model in models]
-    except:
-        print("❌ Couldn't check available models (Ollama not running)")
+        # First check if Ollama is running
+        try:
+            response = requests.get("http://localhost:11434/api/version", timeout=5)
+            if response.status_code != 200:
+                print("❌ Cannot check models because Ollama is not running")
+                return False
+        except Exception as e:
+            print(f"❌ Cannot check models: {str(e)}")
+            return False
+        
+        # Then check available models
+        try:
+            response = requests.get("http://localhost:11434/api/tags", timeout=5)
+            if response.status_code == 200:
+                data = response.json()
+                models = data.get("models", [])
+                available_models = [model.get("name", "") for model in models]
+            else:
+                print(f"❌ Failed to get models list (status code: {response.status_code})")
+                return False
+        except Exception as e:
+            print(f"❌ Error retrieving models list: {str(e)}")
+            return False
+    except Exception as e:
+        print(f"❌ Unexpected error checking models: {str(e)}")
         return False
     
     all_models_available = True

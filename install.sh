@@ -51,7 +51,7 @@ echo "Installation completed!"
 echo
 echo "To run the application:"
 echo "1. Make sure Ollama is installed and running"
-echo "2. Pull required models: ollama pull llama3:3b nomic-embed-text"
+echo "2. Pull required models: ollama pull llama3.2:3b nomic-embed-text:latest"
 echo "3. Add your documents to the 'data' folder"
 echo "4. Run: python main.py --reset"
 echo

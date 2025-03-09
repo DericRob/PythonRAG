@@ -45,7 +45,7 @@ def query_and_validate(question: str, expected_response: str):
     )
 
     # Use Llama 3.2 3B to evaluate the response
-    model = Ollama(model="llama3:3b")
+    model = Ollama(model="llama3.2:3b")
     evaluation_results_str = model.invoke(prompt)
     evaluation_results_str_cleaned = evaluation_results_str.strip().lower()
 

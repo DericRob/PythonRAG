@@ -108,7 +108,6 @@ def check_dependencies():
     required_packages = [
         "langchain",
         "langchain_community",
-        "langchain_ollama",
         "langchain_chroma",
         "chromadb",
         "flask",
@@ -123,6 +122,14 @@ def check_dependencies():
         else:
             print(f"❌ {package} is not installed")
             all_deps_installed = False
+    
+    # Specifically check for Ollama import
+    try:
+        from langchain_community.llms.ollama import Ollama
+        print("✅ Ollama can be imported from langchain_community")
+    except ImportError:
+        print("❌ Cannot import Ollama from langchain_community")
+        all_deps_installed = False
     
     if not all_deps_installed:
         print("\nSome required packages are missing.")

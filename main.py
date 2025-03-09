@@ -17,18 +17,15 @@ def check_dependencies():
     """Check if all required dependencies are installed."""
     try:
         # Check for required packages
-        import langchain_ollama
         import langchain_chroma
         
-        # Check if Ollama is installed and running
+        # Make sure we can import Ollama from the correct location
         try:
-            import requests
-            response = requests.get("http://localhost:11434/api/version")
-            if response.status_code != 200:
-                print("⚠️ Warning: Ollama API doesn't seem to be responding. Please make sure Ollama is running.")
-                print("   You can download Ollama from: https://ollama.ai/")
-                return False
-        except:
+            from langchain_community.llms.ollama import Ollama
+        except ImportError:
+            print("⚠️ Warning: Could not import Ollama from langchain_community.llms.ollama")
+            print("   Please make sure langchain_community is properly installed.")
+            return False
             print("⚠️ Warning: Couldn't connect to Ollama. Please make sure Ollama is installed and running.")
             print("   You can download Ollama from: https://ollama.ai/")
             return False
@@ -38,7 +35,7 @@ def check_dependencies():
             response = requests.get("http://localhost:11434/api/tags")
             if response.status_code == 200:
                 models = response.json().get("models", [])
-                if not any(model.get("name") == "llama3.2:3b" for model in models):
+                if not any(model.get("name") == "llama3:3b" for model in models):
                     print("⚠️ Warning: Llama 3.2 3B model not found in Ollama.")
                     print("   Please run: ollama pull llama3:3b")
                     return False
@@ -48,7 +45,7 @@ def check_dependencies():
             
         # Check for nomic-embed-text model for embeddings
         try:
-            if not any(model.get("name") == "nomic-embed-text:latest" for model in models):
+            if not any(model.get("name") == "nomic-embed-text" for model in models):
                 print("⚠️ Warning: nomic-embed-text embedding model not found in Ollama.")
                 print("   Please run: ollama pull nomic-embed-text")
                 return False

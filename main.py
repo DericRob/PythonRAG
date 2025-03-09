@@ -75,7 +75,7 @@ def check_dependencies():
                 print("✅ Found required LLM model: llama3.2:3b")
                 
                 # Check for embedding model
-                if "nomic-embed-text" not in model_names:
+                if "nomic-embed-text:latest" not in model_names:
                     print("❌ Required embedding model 'nomic-embed-text' not found")
                     print("   Please run: ollama pull nomic-embed-text")
                     return False

@@ -62,7 +62,7 @@ def install_ollama():
 
 def download_models():
     """Download the required models using Ollama."""
-    models_to_download = ["llama3:3b", "nomic-embed-text"]
+    models_to_download = ["llama3.2:3b", "nomic-embed-text:latest"]
     
     print("\n=== Downloading Models ===")
     for model in models_to_download:

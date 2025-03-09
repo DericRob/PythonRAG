@@ -76,7 +76,7 @@ def check_models():
     """Check if required models are available in Ollama."""
     print("\nChecking models...")
     
-    required_models = ["llama3:3b", "nomic-embed-text"]
+    required_models = ["llama3.2:3b", "nomic-embed-text:latestn"]
     available_models = []
     
     try:

@@ -1,5 +1,5 @@
 from query_data import query_rag
-from langchain_community.llms.ollama import Ollama
+from langchain_ollama import Ollama  # Corrected import
 
 EVAL_PROMPT = """
 Expected Response: {expected_response}
@@ -44,8 +44,8 @@ def query_and_validate(question: str, expected_response: str):
         expected_response=expected_response, actual_response=response_text
     )
 
-    # Use Llama 3.2 3B to evaluate the response
-    model = Ollama(model="llama3:3b")
+    # Use Llama 3.2 to evaluate the response
+    model = Ollama(model="llama3.2:3b")
     evaluation_results_str = model.invoke(prompt)
     evaluation_results_str_cleaned = evaluation_results_str.strip().lower()
 

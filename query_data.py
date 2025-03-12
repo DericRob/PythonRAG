@@ -5,9 +5,8 @@ import importlib.util
 from get_embedding_function import get_embedding_function
 
 CHROMA_PATH = "chroma"
-LLAMA_MODEL = "llama3.2:3b"  # Make sure this matches what you see with "ollama list"
+LLAMA_MODEL = "llama3.2:3b"  
 
-# Improved prompt template with instructions on how to respond
 PROMPT_TEMPLATE = """
 Answer the question based only on the following context:
 

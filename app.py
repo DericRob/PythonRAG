@@ -124,6 +124,8 @@ def setup_static_folder():
         .header {
             /* CDC gradient from blue to teal */
             background: linear-gradient(90deg, #0052A5 0%, #00A0B7 100%);
+            /* CDC gradient from blue to teal */
+            background: linear-gradient(90deg, #0052A5 0%, #00A0B7 100%);
             color: white;
             padding: 20px;
             margin-bottom: 30px;
@@ -287,6 +289,7 @@ def setup_static_folder():
     
     <div class="container">
         <div class="input-group">
+            <label for="topic">What would you like the Content Creator to do for you?</label>
             <label for="topic">What would you like the Content Creator to do for you?</label>
             <input type="text" id="topic" placeholder="Enter your topic or question...">
         </div>

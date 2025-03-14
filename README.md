@@ -5,7 +5,7 @@ This application uses Retrieval-Augmented Generation (RAG) to create content bas
 ## Features
 
 - **Document Analysis**: Automatically processes multiple document types (.pdf, .txt, .docx, .csv, .xlsx, etc.)
-- **Advanced RAG**: Chunks documents intelligently and retrieves relevant information for responses
+- **Advanced RAG**: Chunks documents intelligently and retrieves relevant information for responses. Stores the chunks in the vector database
 - **Multiple Content Types**: Generates articles, social media posts, and video scripts
 - **Free Models**: Uses Llama 3.2 3B and open-source embedding models
 - **Modern UI**: Clean, responsive web interface for content generation
